@@ -26,7 +26,10 @@ for du in $destUser; do
     /bin/mkdir -p ${vimbakDir}
   fi
 
-  /usr/bin/find ${destDir} -name '.vim*' -print0 | xargs -0 -I {} /usr/sbin/chown ${du}:${userGroup} {}
+  /usr/bin/find ${destDir}/.vim -print0 | xargs -0 -I {} /usr/sbin/chown ${du}:${userGroup} {}
+  /usr/bin/find ${destDir}/.vimbak -print0 | xargs -0 -I {} /usr/sbin/chown ${du}:${userGroup} {}
+  /usr/sbin/chown ${du}:${userGroup} ${destDir}/.vimrc
+
   /bin/chmod 750 ${vimbakDir}
 done
 

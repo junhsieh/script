@@ -2,20 +2,25 @@
 
 srcUser="git"
 srcDir=/home/${srcUser}
-destUser="jun root"
+destUser="jun svn root"
 destDir=""
 vimbakDir=""
-userGroup=""
+chownArg=""
 
 for du in $destUser; do
   if [ "${du}" = "root" ]; then
     destDir=/${du}
+    chownArg=${du}:wheel
   else
     destDir=/home/${du}
+    chownArg=${du}:${du}
+  fi
+
+  if [ ! -d ${destDir} ]; then
+    continue;
   fi
 
   vimbakDir=${destDir}/.vimbak
-  userGroup=`id -gn ${du}`
 
   /bin/rm -r ${destDir}/.vim
   /bin/rm -r ${destDir}/.vimrc
@@ -26,9 +31,9 @@ for du in $destUser; do
     /bin/mkdir -p ${vimbakDir}
   fi
 
-  /usr/bin/find ${destDir}/.vim -print0 | xargs -0 -I {} /usr/sbin/chown ${du}:${userGroup} {}
-  /usr/bin/find ${destDir}/.vimbak -print0 | xargs -0 -I {} /usr/sbin/chown ${du}:${userGroup} {}
-  /usr/sbin/chown ${du}:${userGroup} ${destDir}/.vimrc
+  /usr/sbin/chown ${chownArg} ${destDir}/.vimrc
+  /usr/bin/find ${destDir}/.vim -print0 | xargs -0 -I {} /usr/sbin/chown ${chownArg} {}
+  /usr/bin/find ${destDir}/.vimbak -print0 | xargs -0 -I {} /usr/sbin/chown ${chownArg} {}
 
   /bin/chmod 750 ${vimbakDir}
 done
